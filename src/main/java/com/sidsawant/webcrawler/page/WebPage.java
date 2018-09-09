@@ -8,6 +8,7 @@ public class WebPage {
 	Set<String> externalLinks;
 	Set<String> links;
 	Set<String> images;
+
 	
 	public String getName() {
 		return name;

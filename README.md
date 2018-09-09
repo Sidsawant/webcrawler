@@ -10,3 +10,4 @@ TODO
 - External links to be added to display
 - image tags added to be display
 - improve tests
+- Display in proper format

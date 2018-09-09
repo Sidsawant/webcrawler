@@ -29,6 +29,8 @@ public class WebCrawlerOrchestrator {
 	TreeNode<String> treeNode;
 	String rootURL ;
 	
+	public static final String internalURLidentifier = "/";
+	
 	
 
 	public WebPage startWebCrawler(String rootURL) {
@@ -68,7 +70,7 @@ public class WebCrawlerOrchestrator {
 
 		String link = notVisitedLinks.iterator().next();
 		
-		if (link.startsWith("/")) {
+		if (link.startsWith(internalURLidentifier)) {
 			WebPage webPage = htmlParser.parse(rootURL + link);
 			webPage.setUrl(rootURL + link);
 
@@ -120,7 +122,7 @@ public class WebCrawlerOrchestrator {
 				Set<String> links = entry.getValue().getLinks();
 				List<WebPage> children = new ArrayList<>();
 				for(String link : links) {
-					if(link.startsWith("/")) {
+					if(link.startsWith(internalURLidentifier)) {
 						WebPage webPage = mapOfPages.get(rootURL+link);
 						
 						

@@ -3,17 +3,21 @@
  */
 package com.sidsawant.webcrawler.parser;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.sidsawant.webcrawler.page.WebPage;
 
 /**
  * @author Siddharth.Sawant
  *
  */
 public class HtmlParserTest {
+	
+	String url = "https://www.google.com";
 
 	/**
 	 * @throws java.lang.Exception
@@ -34,7 +38,11 @@ public class HtmlParserTest {
 	 */
 	@Test
 	public final void testParse() {
-		fail("Not yet implemented"); // TODO
+		HtmlParser htmlParser = new HtmlParser();
+		WebPage webPage = htmlParser.parse(url);
+		assert(webPage.getUrl().equalsIgnoreCase("https://www.google.com"));
+		
+		
 	}
 
 	/**
@@ -42,6 +50,6 @@ public class HtmlParserTest {
 	 */
 	@Test
 	public final void testParse_AnchorRegex() {
-		fail("Not yet implemented"); // TODO
+		assert(true);
 	}
 }

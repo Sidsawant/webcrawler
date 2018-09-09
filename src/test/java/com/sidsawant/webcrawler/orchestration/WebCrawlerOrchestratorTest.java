@@ -6,10 +6,15 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.sidsawant.webcrawler.page.WebPage;
+import com.sidsawant.webcrawler.parser.HtmlParser;
+
 public class WebCrawlerOrchestratorTest {
 
 	@Before
 	public void setUp() throws Exception {
+		
+		
 	}
 
 	@After
@@ -18,7 +23,9 @@ public class WebCrawlerOrchestratorTest {
 
 	@Test
 	public final void testStartWebCrawler() {
-		fail("Not yet implemented"); // TODO
+		WebCrawlerOrchestrator webCrawlerOrchestrator = new WebCrawlerOrchestrator();
+		WebPage webPage = webCrawlerOrchestrator.startWebCrawler("https://www.google.com");
+		assert(webPage.getUrl().equalsIgnoreCase("https://www.google.com"));
 	}
 
 }

@@ -3,10 +3,13 @@ package com.sidsawant.webcrawler.tree;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class TreeNode<String> {
 
-	private TreeNode<String> node;
+	private static final Logger LOGGER = Logger.getLogger(TreeNode.class.getName());
+	
+	
 	private String content;
 
 	/**
@@ -41,40 +44,25 @@ public class TreeNode<String> {
 		this.children = children;
 	}
 
-	/**
-	 * @return the node
-	 */
-	public TreeNode<String> getNode() {
-		return node;
-	}
+	
 
-	/**
-	 * @param node
-	 *            the node to set
-	 */
-	public void setNode(TreeNode<String> node) {
-		this.node = node;
-	}
-
-	public TreeNode(TreeNode<String> parent, String content) {
-		this.node = parent;
+	
+	
+	public TreeNode(String content) {
 		this.content = content;
-		if (parent != null) {
-			// if it's a Collections.emptyList(), then we need to make it a list we can add
-			// to
-			if (parent.children == Collections.EMPTY_LIST) {
-				parent.children = new ArrayList<>();
-			}
-			parent.children.add(this);
-		}else {
-			children = Collections.EMPTY_LIST;
-		}
-
-		
-
+		children = new ArrayList<TreeNode<String>>();
 	}
+	
+	
 
 	public void display() {
+		
+		for(int i=0;i<children.size();i++) {
+			System.out.println(children.get(i).content);
+			if(children.get(i).children.size()>0) {
+				children.get(i).display();
+			}
+		}
 
 	}
 }

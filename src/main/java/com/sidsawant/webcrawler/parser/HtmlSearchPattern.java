@@ -5,14 +5,14 @@ public enum HtmlSearchPattern {
 	IMAGE ("img=\"(.*)\""),
 	ANCHOR ("href=\"(.*)\"");
 	
-	private final String htmlSearchPattern;
+	private final String htmlMatchPattern;
 	
-	HtmlSearchPattern(String htmlSearchPattern){
-		this.htmlSearchPattern = htmlSearchPattern;
+	HtmlSearchPattern(String htmlMatchPattern){
+		this.htmlMatchPattern = htmlMatchPattern;
 		
 	}
 	
 	public String getHtmlSearchPattern() {
-		return this.htmlSearchPattern;
+		return this.htmlMatchPattern;
 	}
 }

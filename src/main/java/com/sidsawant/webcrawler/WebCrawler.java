@@ -21,7 +21,7 @@ public class WebCrawler {
 		WebCrawlerOrchestrator webCrawlerOrchestror = new WebCrawlerOrchestrator();
 		WebPage webPage = webCrawlerOrchestror.startWebCrawler(args[0]);
 		webCrawlerOrchestror.prepareSiteMap();
-		webCrawlerOrchestror.display(webPage);
+		webCrawlerOrchestror.display(webPage, " ");
 	}
 
 }

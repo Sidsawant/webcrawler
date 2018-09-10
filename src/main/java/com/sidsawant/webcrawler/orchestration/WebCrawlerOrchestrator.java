@@ -1,14 +1,11 @@
 package com.sidsawant.webcrawler.orchestration;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.sidsawant.webcrawler.page.WebPage;
@@ -24,12 +21,26 @@ public class WebCrawlerOrchestrator {
 
 	private Map<String, WebPage> mapOfPages;
 
+	/**
+	 * @return the mapOfPages
+	 */
+	public Map<String, WebPage> getMapOfPages() {
+		return mapOfPages;
+	}
+
+	/**
+	 * @param mapOfPages the mapOfPages to set
+	 */
+	public void setMapOfPages(Map<String, WebPage> mapOfPages) {
+		this.mapOfPages = mapOfPages;
+	}
+
 	private Map<String, WebPage> displayed = new HashMap<>();;
 
-	TreeNode<String> treeNode;
+	
 	String rootURL ;
 	
-	public static final String internalURLidentifier = "/";
+	public static final String INTERNALURLIDENTIFIER = "/";
 	
 	
 
@@ -70,7 +81,7 @@ public class WebCrawlerOrchestrator {
 
 		String link = notVisitedLinks.iterator().next();
 		
-		if (link.startsWith(internalURLidentifier)) {
+		if (link.startsWith(INTERNALURLIDENTIFIER)) {
 			WebPage webPage = htmlParser.parse(rootURL + link);
 			webPage.setUrl(rootURL + link);
 
@@ -92,17 +103,19 @@ public class WebCrawlerOrchestrator {
 		}
 	}
 
-	public void display(WebPage webPage) {
+	//intentinally kept system.out for better viewing of results
+	public void display(WebPage webPage, String appender) {
 
-		
+		System.out.println(webPage.getUrl());
 		List<WebPage> children = webPage.getChildren();
 		if(!displayed.containsKey(webPage.getUrl())) {
 			displayed.put(webPage.getUrl(), webPage);
 			if (children != null) {
 				for (int i = 0; i < children.size(); i++) {
-					LOGGER.log(Level.INFO, webPage.getUrl());
+					
 					if (children.get(i).getChildren()!=null && children.get(i).getChildren().size() > 0) {
-						display(children.get(i));
+						
+						display(children.get(i),appender + appender);
 					}
 				}
 			}
@@ -122,7 +135,7 @@ public class WebCrawlerOrchestrator {
 				Set<String> links = entry.getValue().getLinks();
 				List<WebPage> children = new ArrayList<>();
 				for(String link : links) {
-					if(link.startsWith(internalURLidentifier)) {
+					if(link.startsWith(INTERNALURLIDENTIFIER)) {
 						WebPage webPage = mapOfPages.get(rootURL+link);
 						
 						

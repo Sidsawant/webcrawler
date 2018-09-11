@@ -46,3 +46,8 @@ mvn test
 
 * [Maven](https://maven.apache.org/) - Dependency Management
 
+## Future extensions
+Currently the processing of urls is in a sequential order, it can be parallelized for faster processing
+display is rudimentary, tree like structure can be provided
+testing scenarios can be added
+

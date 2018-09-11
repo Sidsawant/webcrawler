@@ -9,16 +9,32 @@ import java.util.Set;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit4.SpringRunner;
 
+import com.sidsawant.webcrawler.AppConfig;
 import com.sidsawant.webcrawler.page.WebPage;
 
 /**
  * @author Siddharth.Sawant
  *
  */
+
+@RunWith(SpringRunner.class)
+@ContextConfiguration(classes = {AppConfig.class})
+@TestPropertySource(locations="classpath:application.properties")
 public class HtmlParserTest {
 	
+	
+	
 	String url = "https://www.google.com";
+	
+	@Autowired
+	Parser htmlParser;
 
 	/**
 	 * @throws java.lang.Exception
@@ -41,7 +57,7 @@ public class HtmlParserTest {
 	 */
 	@Test
 	public final void testParse() {
-		HtmlParser htmlParser = new HtmlParser();
+		
 		WebPage webPage = htmlParser.parse(url);
 		assert(webPage.getUrl().equalsIgnoreCase("https://www.google.com"));
 		

@@ -4,6 +4,6 @@ import java.util.List;
 
 public interface DataService {
 	
-	public List<String> fetchData(String url);
+	public List<String> fetchData(String url) ;
 
 }

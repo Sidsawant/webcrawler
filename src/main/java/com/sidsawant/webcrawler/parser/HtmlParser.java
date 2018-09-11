@@ -80,6 +80,9 @@ public class HtmlParser implements Parser {
 		Set<String> linkedUrls = new HashSet<>();
 		Set<String> linkedImages = new HashSet<>();
 
+		if(webPageLines==null) {
+			return;
+		}
 		webPageLines.forEach(webPageLine -> {
 			Matcher matcher = patternAnchor.matcher(webPageLine);
 

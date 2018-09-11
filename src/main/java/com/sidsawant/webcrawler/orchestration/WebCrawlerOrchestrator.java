@@ -1,5 +1,8 @@
 package com.sidsawant.webcrawler.orchestration;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -77,7 +80,8 @@ public class WebCrawlerOrchestrator implements CrawlerOrchestrator {
 
 		visitedLinks.add(rootURL);
 		// create webPages for all the links to be visted
-
+		if (webPage.getLinks() == null || webPage.getLinks().isEmpty())
+			return webPage;
 		notVisitedLinks.addAll(webPage.getLinks());
 
 		addVistedPage(htmlParser);
@@ -89,7 +93,7 @@ public class WebCrawlerOrchestrator implements CrawlerOrchestrator {
 
 		String link = notVisitedLinks.iterator().next();
 
-		if (link.startsWith(INTERNALURLIDENTIFIER) ) {
+		if (link.startsWith(INTERNALURLIDENTIFIER)) {
 
 			WebPage webPage = htmlParser.parse(rootURL + link);
 			webPage.setUrl(rootURL + link);
@@ -103,10 +107,10 @@ public class WebCrawlerOrchestrator implements CrawlerOrchestrator {
 			mapOfPages.put(webPage.getUrl(), webPage);
 
 		}
-		if ( link.startsWith(rootURL)) {
+		if (link.startsWith(rootURL)) {
 
-			WebPage webPage = htmlParser.parse( link);
-			webPage.setUrl( link);
+			WebPage webPage = htmlParser.parse(link);
+			webPage.setUrl(link);
 
 			if (null != webPage.getLinks()) {
 				notVisitedLinks.addAll(webPage.getLinks());
@@ -123,25 +127,6 @@ public class WebCrawlerOrchestrator implements CrawlerOrchestrator {
 		if (notVisitedLinks.iterator().hasNext()) {
 			addVistedPage(htmlParser);
 		}
-	}
-
-	// intentinally kept system.out for better viewing of results
-	public void display(WebPage webPage, String appender) {
-
-		System.out.println(appender + webPage.getUrl());
-		List<WebPage> children = webPage.getChildren();
-		if (!displayed.containsKey(webPage.getUrl())) {
-
-			displayed.put(webPage.getUrl(), webPage);
-			if (children != null) {
-				for (int i = 0; i < children.size(); i++) {
-
-					display(children.get(i), appender + appender);
-
-				}
-			}
-		}
-
 	}
 
 	/**
@@ -163,51 +148,61 @@ public class WebCrawlerOrchestrator implements CrawlerOrchestrator {
 	// This needs to go ina separate Class
 	public void prepareSiteMap() {
 
+		StringBuilder stringBuilder = new StringBuilder();
 		for (Map.Entry<String, WebPage> entry : mapOfPages.entrySet()) {
 
 			if (entry.getValue() != null && entry.getValue().getLinks() != null) {
 				Set<String> links = entry.getValue().getLinks();
-				System.out.println(entry.getValue().getUrl());
+				stringBuilder.append((entry.getValue().getUrl()) + "\n");
 				List<WebPage> children = new ArrayList<>();
 				for (String link : links) {
+					WebPage webPage;
 					if (link.startsWith(INTERNALURLIDENTIFIER)) {
-						WebPage webPage = mapOfPages.get(rootURL + link);
-
-						System.out.println("\t" + webPage.getUrl());
-						children.add(webPage);
-
+						webPage = mapOfPages.get(rootURL + link);
 					} else {
-						WebPage webPage = mapOfPages.get(link);
-
-						System.out.println("\t" + webPage.getUrl());
-						children.add(webPage);
+						webPage = mapOfPages.get(link);
 					}
+					stringBuilder.append(("\t" + webPage.getUrl()) + "\n");
+					children.add(webPage);
+				}
+				Set<String> externalLinks = entry.getValue().getExternalLinks();
+				if (!externalLinks.isEmpty()) {
+					stringBuilder.append(("\t\t" + "external Links" + "\n"));
+				}
+				for (String externallink : externalLinks) {
 
-					Set<String> externalLinks = entry.getValue().getExternalLinks();
-					if (!externalLinks.isEmpty()) {
-						System.out.println("\t\t" + "external Links");
-					}
-					for (String externallink : externalLinks) {
-
-						System.out.println("\t" + externallink);
-
-					}
-
-					Set<String> imageLinks = entry.getValue().getImages();
-					if (!imageLinks.isEmpty()) {
-						System.out.println("\t\t" + "image Links");
-					}
-
-					for (String imageLink : imageLinks) {
-
-						System.out.println("\t" + rootURL + imageLink);
-
-					}
+					stringBuilder.append(("\t" + externallink) + "\n");
 
 				}
+
+				Set<String> imageLinks = entry.getValue().getImages();
+				if (!imageLinks.isEmpty()) {
+					stringBuilder.append(("\t\t" + "image Links") + "\n");
+				}
+
+				for (String imageLink : imageLinks) {
+
+					stringBuilder.append(("\t" + rootURL + imageLink) + "\n");
+
+				}
+
 				entry.getValue().setChildren(children);
 
 			}
+			BufferedWriter writer = null;
+			try {
+				writer = new BufferedWriter(new FileWriter("sitemap.log"));
+				writer.write(stringBuilder.toString());
+			} catch (IOException e) {
+				LOGGER.log(Level.SEVERE, e.getMessage());
+			} finally {
+				try {
+					writer.close();
+				} catch (IOException e) {
+					LOGGER.log(Level.SEVERE, e.getMessage());
+				}
+			}
+
 		}
 
 		// print the root

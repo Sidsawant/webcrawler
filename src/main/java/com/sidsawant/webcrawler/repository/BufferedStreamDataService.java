@@ -17,28 +17,32 @@ import com.sidsawant.webcrawler.orchestration.WebCrawlerOrchestrator;
 
 @Repository
 public class BufferedStreamDataService implements DataService {
-	
+
 	private static final Logger LOGGER = Logger.getLogger(BufferedStreamDataService.class.getName());
-	private final static String ANCHORFINDER = "<a href=";
-	private final static String IMAGEFINDER = "<img";
+	private static final  String ANCHORFINDER = "<a href=";
+	private static final  String IMAGEFINDER = "<img";
 
 	@Override
-	public List<String> fetchData(String url) {
-		
+	public List<String> fetchData(String url)  {
+
 		List<String> webPageLines = null;
 		if (!url.endsWith(".pdf")) {
-		try (BufferedReader buffer = new BufferedReader(
-				new InputStreamReader(new BufferedInputStream(new URL(url).openStream())))) {
-			 webPageLines = buffer.lines().filter(anchor -> anchor.contains(ANCHORFINDER)|| anchor.contains(IMAGEFINDER))
-					.collect(Collectors.toList());
+			try (BufferedReader buffer = new BufferedReader(
+					new InputStreamReader(new BufferedInputStream(new URL(url).openStream())))) {
+				webPageLines = buffer.lines()
+						.filter(anchor -> anchor.contains(ANCHORFINDER) || anchor.contains(IMAGEFINDER))
+						.collect(Collectors.toList());
 
-			
-
-		} catch (MalformedURLException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage());
-		} catch (IOException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage());
-		}
+			} catch (MalformedURLException e) {
+				LOGGER.log(Level.SEVERE, "Error fetching data from url" + url);
+				LOGGER.log(Level.SEVERE, e.getMessage());
+				
+			} catch (IOException e) {
+				LOGGER.log(Level.SEVERE, "Error fetching data from url" + url);
+				LOGGER.log(Level.SEVERE, e.getMessage());
+				
+				
+			}
 		}
 		return webPageLines;
 	}

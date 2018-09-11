@@ -1,7 +1,5 @@
 package com.sidsawant.webcrawler.orchestration;
 
-import static org.junit.Assert.*;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -9,13 +7,22 @@ import java.util.Map;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.sidsawant.webcrawler.AppConfig;
 import com.sidsawant.webcrawler.page.WebPage;
-import com.sidsawant.webcrawler.parser.HtmlParser;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = {AppConfig.class})
+@TestPropertySource(locations="classpath:application.properties")
 public class WebCrawlerOrchestratorTest {
 
-	WebCrawlerOrchestrator webCrawlerOrchestrator = new WebCrawlerOrchestrator();
+	@Autowired
+	CrawlerOrchestrator webCrawlerOrchestrator ;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -78,17 +85,12 @@ public class WebCrawlerOrchestratorTest {
 
 	@Test
 	public final void testStartWebCrawler() {
-		WebCrawlerOrchestrator webCrawlerOrchestrator = new WebCrawlerOrchestrator();
+		
 		webCrawlerOrchestrator.setRootURL("https://www.google.com");
 		WebPage webPage = webCrawlerOrchestrator.startCrawler();
 		assert(webPage.getUrl().equalsIgnoreCase("https://www.google.com"));
 	}
 	
-	@Test
-	public final void testDisplayTree() {
-		WebPage webPage = webCrawlerOrchestrator.getMapOfPages().get("https://www.prudential.co.uk");
-		webCrawlerOrchestrator.prepareSiteMap();
-		webCrawlerOrchestrator.display(webPage, " ");
-	}
+	
 
 }

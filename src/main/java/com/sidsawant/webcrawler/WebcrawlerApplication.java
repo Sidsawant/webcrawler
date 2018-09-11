@@ -8,7 +8,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 import com.sidsawant.webcrawler.orchestration.CrawlerOrchestrator;
-import com.sidsawant.webcrawler.orchestration.WebCrawlerOrchestrator;
 
 @SpringBootApplication
 @ComponentScan(basePackages = { "com.sidsawant.webcrawler" })
@@ -18,7 +17,7 @@ public class WebcrawlerApplication implements CommandLineRunner {
 	CrawlerOrchestrator webCrawlerOrchestror;
 
 	public static void main(String[] args) {
-		
+
 		SpringApplication app = new SpringApplication(WebcrawlerApplication.class);
 		app.setBannerMode(Banner.Mode.CONSOLE);
 		app.run(args);
@@ -29,7 +28,7 @@ public class WebcrawlerApplication implements CommandLineRunner {
 
 		webCrawlerOrchestror.startCrawler();
 		webCrawlerOrchestror.prepareSiteMap();
-		// webCrawlerOrchestror.getMapOfPages().get(args[0]);
+
 
 	}
 }

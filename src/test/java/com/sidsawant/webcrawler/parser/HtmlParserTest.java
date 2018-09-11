@@ -3,8 +3,8 @@
  */
 package com.sidsawant.webcrawler.parser;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.After;
 import org.junit.Before;
@@ -25,6 +25,7 @@ public class HtmlParserTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
+		
 		
 	}
 

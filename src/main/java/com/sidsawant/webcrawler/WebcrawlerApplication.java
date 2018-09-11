@@ -18,6 +18,7 @@ public class WebcrawlerApplication implements CommandLineRunner {
 	CrawlerOrchestrator webCrawlerOrchestror;
 
 	public static void main(String[] args) {
+		
 		SpringApplication app = new SpringApplication(WebcrawlerApplication.class);
 		app.setBannerMode(Banner.Mode.CONSOLE);
 		app.run(args);

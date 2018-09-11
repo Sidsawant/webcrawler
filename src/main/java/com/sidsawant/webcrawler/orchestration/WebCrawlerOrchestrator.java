@@ -19,26 +19,46 @@ import org.springframework.stereotype.Service;
 import com.sidsawant.webcrawler.page.WebPage;
 import com.sidsawant.webcrawler.parser.HtmlParser;
 
+/**
+ * Class used to orchestrate the different steps needed to generate the site map
+ * 
+ * @author Siddharth.Sawant
+ *
+ */
 @Service
 public class WebCrawlerOrchestrator implements CrawlerOrchestrator {
 
+	/**
+	 * logger
+	 */
 	private static final Logger LOGGER = Logger.getLogger(WebCrawlerOrchestrator.class.getName());
 
+	/**
+	 * to store all visited links
+	 */
 	private Set<String> visitedLinks;
+	
+	/**
+	 * Store all not visited links
+	 */
 	private Set<String> notVisitedLinks;
 
 	@Autowired
 	HtmlParser htmlParser;
 
+	/**
+	 * to store all pages with its child links, used for displaying, 
+	 * writing to site map
+	 */
 	private Map<String, WebPage> mapOfPages;
 
-	private Map<String, WebPage> displayed = new HashMap<>();;
+	
 
 	@Value("${rooturl}")
 	private String rootURL;
 
 	public static final String INTERNALURLIDENTIFIER = "/";
-	public static final String EXTERNALURLIDENTIFIER = "/";
+	public static final String EXTERNALURLIDENTIFIER = "http";
 
 	/**
 	 * @return the mapOfPages
@@ -55,6 +75,10 @@ public class WebCrawlerOrchestrator implements CrawlerOrchestrator {
 		this.mapOfPages = mapOfPages;
 	}
 
+	/**
+	 * 
+	 * 
+	 */
 	@Override
 	public WebPage startCrawler() {
 
@@ -62,6 +86,12 @@ public class WebCrawlerOrchestrator implements CrawlerOrchestrator {
 
 	}
 
+	
+	/**
+	 * 
+	 * @param rootURL
+	 * @return
+	 */
 	private WebPage orchestrateCrawler(String rootURL) {
 
 		this.rootURL = rootURL;
@@ -69,6 +99,11 @@ public class WebCrawlerOrchestrator implements CrawlerOrchestrator {
 
 	}
 
+	/**
+	 * 
+	 * @param htmlParser
+	 * @return
+	 */
 	private WebPage startPageRoot(HtmlParser htmlParser) {
 
 		visitedLinks = new TreeSet<>();
@@ -88,6 +123,11 @@ public class WebCrawlerOrchestrator implements CrawlerOrchestrator {
 		return webPage;
 
 	}
+	
+	/**
+	 * 
+	 * @param htmlParser
+	 */
 
 	private void addVistedPage(HtmlParser htmlParser) {
 

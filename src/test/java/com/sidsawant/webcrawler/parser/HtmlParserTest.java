@@ -5,6 +5,7 @@ package com.sidsawant.webcrawler.parser;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.After;
 import org.junit.Before;
@@ -17,6 +18,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.sidsawant.webcrawler.AppConfig;
+import com.sidsawant.webcrawler.orchestration.WebCrawlerOrchestrator;
 import com.sidsawant.webcrawler.page.WebPage;
 
 /**
@@ -25,14 +27,12 @@ import com.sidsawant.webcrawler.page.WebPage;
  */
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {AppConfig.class})
-@TestPropertySource(locations="classpath:application.properties")
+@ContextConfiguration(classes = { AppConfig.class })
+@TestPropertySource(locations = "classpath:application.properties")
 public class HtmlParserTest {
-	
-	
-	
+
 	String url = "https://www.google.com";
-	
+
 	@Autowired
 	Parser htmlParser;
 
@@ -41,8 +41,7 @@ public class HtmlParserTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		
-		
+
 	}
 
 	/**
@@ -53,22 +52,23 @@ public class HtmlParserTest {
 	}
 
 	/**
-	 * Test method for {@link com.sidsawant.webcrawler.parser.HtmlParser#parse(java.lang.String)}.
+	 * Test method for
+	 * {@link com.sidsawant.webcrawler.parser.HtmlParser#parse(java.lang.String)}.
 	 */
 	@Test
 	public final void testParse() {
-		
+
 		WebPage webPage = htmlParser.parse(url);
-		assert(webPage.getUrl().equalsIgnoreCase("https://www.google.com"));
-		
-		
+		assert (webPage.getUrl().equalsIgnoreCase("https://www.google.com"));
+
 	}
 
 	/**
-	 * Test method for {@link com.sidsawant.webcrawler.parser.HtmlParser#parse(java.lang.String)}.
+	 * Test method for
+	 * {@link com.sidsawant.webcrawler.parser.HtmlParser#parse(java.lang.String)}.
 	 */
 	@Test
 	public final void testParse_AnchorRegex() {
-		assert(true);
+		assert (true);
 	}
 }

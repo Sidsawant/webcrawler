@@ -19,6 +19,8 @@ import com.sidsawant.webcrawler.page.WebPage;
 import com.sidsawant.webcrawler.repository.DataService;
 
 /**
+ * Primary class for parsing html data and converting into a WebPage format
+ * 
  * @author Siddharth.Sawant
  *
  */
@@ -31,41 +33,33 @@ public class HtmlParser implements Parser {
 	private static final HtmlSearchPattern htmlSearchPatternAnchor = HtmlSearchPattern.ANCHOR;
 	private static final Pattern patternAnchor = Pattern.compile(htmlSearchPatternAnchor.getHtmlSearchPattern());
 
-	// Create a Image Pattern object improve performance by compiling before the executions start
-	private final static HtmlSearchPattern htmlImagePatternImage = HtmlSearchPattern.IMAGE;
-	private final static Pattern patternImage = Pattern.compile(htmlImagePatternImage.getHtmlSearchPattern());
-	
-	
+	// Create a Image Pattern object improve performance by compiling before the
+	// executions start
+	private static final  HtmlSearchPattern htmlImagePatternImage = HtmlSearchPattern.IMAGE;
+	private static final  Pattern patternImage = Pattern.compile(htmlImagePatternImage.getHtmlSearchPattern());
+
 	private static final String LINKRESOLVER = "\"";
-	
+
 	@Autowired
-	DataService dataService ;
-	
-	
+	DataService dataService;
 
-	// Default constructor
-	public HtmlParser() {
-
-	}
+	
 
 	/**
 	 * @param url
 	 *            of the web page that needs to be parsed
 	 */
 	public WebPage parse(String url) {
-		
-		
-		WebPage webPage = new WebPage();
-		
-		List<String> webPageLines = dataService.fetchData(url);
-		
-		updateLinksForPage(webPageLines, webPage,url);
-		//Reducing the number of lines by filtering lines that contanin 
-		
 
-			
-			webPage.setUrl(url);
-		
+		WebPage webPage = new WebPage();
+
+		List<String> webPageLines = dataService.fetchData(url);
+
+		updateLinksForPage(webPageLines, webPage, url);
+		// Reducing the number of lines by filtering lines that contanin
+
+		webPage.setUrl(url);
+
 		return webPage;
 	}
 
@@ -75,12 +69,12 @@ public class HtmlParser implements Parser {
 	 * @param webPageLines
 	 * @param webPage
 	 */
-	private void updateLinksForPage(List<String> webPageLines, WebPage webPage,String rootUrl) {
+	private void updateLinksForPage(List<String> webPageLines, WebPage webPage, String rootUrl) {
 
 		Set<String> linkedUrls = new HashSet<>();
 		Set<String> linkedImages = new HashSet<>();
 
-		if(webPageLines==null) {
+		if (webPageLines == null) {
 			return;
 		}
 		webPageLines.forEach(webPageLine -> {
@@ -99,12 +93,14 @@ public class HtmlParser implements Parser {
 
 		});
 
-		webPage.setLinks(linkedUrls.stream()
-				.filter(link -> link.startsWith(rootUrl) || link.startsWith(WebCrawlerOrchestrator.INTERNALURLIDENTIFIER))
+		webPage.setLinks(linkedUrls.stream().filter(
+				link -> link.startsWith(rootUrl) || link.startsWith(WebCrawlerOrchestrator.INTERNALURLIDENTIFIER))
+				.collect(Collectors.toSet()));
+
+		webPage.setExternalLinks(linkedUrls.stream().filter(
+				link -> !link.startsWith(rootUrl) && !link.startsWith(WebCrawlerOrchestrator.INTERNALURLIDENTIFIER))		
 				.collect(Collectors.toSet()));
 		
-		webPage.setExternalLinks(
-				(linkedUrls.stream().filter(link -> link.startsWith(WebCrawlerOrchestrator.EXTERNALURLIDENTIFIER)).collect(Collectors.toSet())));
 		webPage.setImages(linkedImages);
 	}
 }

@@ -8,19 +8,36 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
 import com.sidsawant.webcrawler.page.WebPage;
 import com.sidsawant.webcrawler.parser.HtmlParser;
-import com.sidsawant.webcrawler.tree.TreeNode;
 
-public class WebCrawlerOrchestrator {
+@Service
+public class WebCrawlerOrchestrator implements CrawlerOrchestrator{
 
 	private static final Logger LOGGER = Logger.getLogger(WebCrawlerOrchestrator.class.getName());
 
 	private Set<String> visitedLinks;
 	private Set<String> notVisitedLinks;
 
+	@Autowired
+	HtmlParser htmlParser;
+	
 	private Map<String, WebPage> mapOfPages;
 
+	
+
+	private Map<String, WebPage> displayed = new HashMap<>();;
+
+	@Value ("${rooturl}")
+	private String rootURL ;
+	
+	public static final String INTERNALURLIDENTIFIER = "/";
+	
+	
 	/**
 	 * @return the mapOfPages
 	 */
@@ -34,24 +51,15 @@ public class WebCrawlerOrchestrator {
 	public void setMapOfPages(Map<String, WebPage> mapOfPages) {
 		this.mapOfPages = mapOfPages;
 	}
-
-	private Map<String, WebPage> displayed = new HashMap<>();;
-
-	
-	String rootURL ;
-	
-	public static final String INTERNALURLIDENTIFIER = "/";
-	
-	
-
-	public WebPage startWebCrawler(String rootURL) {
+	@Override
+	public WebPage startCrawler() {
 
 		return orchestrateCrawler(rootURL);
 
 	}
 
 	private WebPage orchestrateCrawler(String rootURL) {
-		HtmlParser htmlParser = new HtmlParser();
+		
 		this.rootURL = rootURL;
 		return startPageRoot(htmlParser);
 
@@ -106,22 +114,37 @@ public class WebCrawlerOrchestrator {
 	//intentinally kept system.out for better viewing of results
 	public void display(WebPage webPage, String appender) {
 
-		System.out.println(webPage.getUrl());
+		System.out.println(appender +webPage.getUrl());
 		List<WebPage> children = webPage.getChildren();
 		if(!displayed.containsKey(webPage.getUrl())) {
+			
 			displayed.put(webPage.getUrl(), webPage);
 			if (children != null) {
 				for (int i = 0; i < children.size(); i++) {
 					
-					if (children.get(i).getChildren()!=null && children.get(i).getChildren().size() > 0) {
+
 						
 						display(children.get(i),appender + appender);
-					}
+
 				}
 			}
 		}
 		
 
+	}
+
+	/**
+	 * @return the rootURL
+	 */
+	public String getRootURL() {
+		return rootURL;
+	}
+
+	/**
+	 * @param rootURL the rootURL to set
+	 */
+	public void setRootURL(String rootURL) {
+		this.rootURL = rootURL;
 	}
 
 	// This needs to go ina separate Class
@@ -133,13 +156,16 @@ public class WebCrawlerOrchestrator {
 			
 			if(entry.getValue()!=null && entry.getValue().getLinks()!=null) {
 				Set<String> links = entry.getValue().getLinks();
+				System.out.println(entry.getValue().getUrl());
 				List<WebPage> children = new ArrayList<>();
 				for(String link : links) {
 					if(link.startsWith(INTERNALURLIDENTIFIER)) {
 						WebPage webPage = mapOfPages.get(rootURL+link);
 						
-						
+							System.out.println("\t"+webPage.getUrl());
 							children.add(webPage);
+							
+							
 						
 					}
 					
@@ -149,6 +175,11 @@ public class WebCrawlerOrchestrator {
 				
 			}
 		}
+		
+		//print the root
+		
 	}
+
+	
 
 }

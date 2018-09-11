@@ -2,7 +2,7 @@ package com.sidsawant.webcrawler.parser;
 
 public enum HtmlSearchPattern {
 
-	IMAGE ("img=\"(.*)\""),
+	IMAGE ("<img src\\s*=\\s*\\\\*\"(.+?)\\\\*\"\\s*\\/>"),
 	ANCHOR ("href=\"(.*)\"");
 	
 	private final String htmlMatchPattern;

@@ -19,9 +19,10 @@ public class WebCrawler {
 		// TODO Auto-generated method stub
 
 		WebCrawlerOrchestrator webCrawlerOrchestror = new WebCrawlerOrchestrator();
-		WebPage webPage = webCrawlerOrchestror.startWebCrawler(args[0]);
+		webCrawlerOrchestror.startCrawler();
 		webCrawlerOrchestror.prepareSiteMap();
-		webCrawlerOrchestror.display(webPage, " ");
+		WebPage w2 = webCrawlerOrchestror.getMapOfPages().get(args[0]);
+		//webCrawlerOrchestror.display(w2, " ");
 	}
 
 }

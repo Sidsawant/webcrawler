@@ -18,65 +18,88 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.springframework.stereotype.Service;
+
 import com.sidsawant.webcrawler.page.WebPage;
 
 /**
  * @author Siddharth.Sawant
  *
  */
-public class HtmlParser implements Parser{
+
+@Service
+public class HtmlParser implements Parser {
 	private final static Logger LOGGER = Logger.getLogger(HtmlParser.class.getName());
 
+	// Create a Pattern object
+	private static final  HtmlSearchPattern htmlSearchPatternAnchor = HtmlSearchPattern.ANCHOR;
+	private static final  Pattern patternAnchor = Pattern.compile(htmlSearchPatternAnchor.getHtmlSearchPattern());
+	
+	// Create a Pattern object
+		private final static HtmlSearchPattern htmlImagePatternImage = HtmlSearchPattern.IMAGE;
+		private final static Pattern patternImage = Pattern.compile(htmlImagePatternImage.getHtmlSearchPattern());
 
 	// Default constructor
 	public HtmlParser() {
-		
+
 	}
 
+	/**
+	 * @param url
+	 *            of the web page that needs to be parsed
+	 */
 	public WebPage parse(String url) {
 		// TODO - CHECK FOR EXTENSIONS BEFORE DOWNLOADING
 		WebPage webPage = new WebPage();
-		if(!url.endsWith(".pdf")) {
-		
-		try (BufferedReader buffer = new BufferedReader(
-				new InputStreamReader(new BufferedInputStream(new URL(url).openStream())))) {
-			List<String> webPageLines = buffer.lines().filter(anchor -> anchor.contains("<a href="))
-					.collect(Collectors.toList());
+		if (!url.endsWith(".pdf")) {
 
-			updateLinksForPage(webPageLines, webPage);
+			try (BufferedReader buffer = new BufferedReader(
+					new InputStreamReader(new BufferedInputStream(new URL(url).openStream())))) {
+				List<String> webPageLines = buffer.lines().filter(anchor -> anchor.contains("<a href="))
+						.collect(Collectors.toList());
 
-		} catch (MalformedURLException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage());
-		} catch (IOException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage());
-		}
-		webPage.setUrl(url);
+				updateLinksForPage(webPageLines, webPage);
+
+			} catch (MalformedURLException e) {
+				LOGGER.log(Level.SEVERE, e.getMessage());
+			} catch (IOException e) {
+				LOGGER.log(Level.SEVERE, e.getMessage());
+			}
+			webPage.setUrl(url);
 		}
 		return webPage;
 	}
 
+	/**
+	 * This method will update all the links
+	 * 
+	 * @param webPageLines
+	 * @param webPage
+	 */
 	private void updateLinksForPage(List<String> webPageLines, WebPage webPage) {
 
-		// Create a Pattern object
-		HtmlSearchPattern htmlSearchPatternAnchor = HtmlSearchPattern.ANCHOR;
-		Pattern patternAnchor = Pattern.compile(htmlSearchPatternAnchor.getHtmlSearchPattern());
+		Set<String> linkedUrls = new HashSet<>();
+		Set<String> linkedImages = new HashSet<>();
 
-		Set<String> linkedUrls = new HashSet<String>();
-		// TODO find a better way
-
-		webPageLines.forEach(item -> {
-			Matcher matcher = patternAnchor.matcher(item);
+		webPageLines.forEach(webPageLine -> {
+			Matcher matcher = patternAnchor.matcher(webPageLine);
+		
 			if (matcher.find()) {
-				String urlHrefs[] = matcher.group(0).replace("href=\"", "").split("\"");
-				linkedUrls.add(urlHrefs[0]);
-
-//				LOGGER.info("url to be " + urlHrefs[0]);
-
+				
+				linkedUrls.add(matcher.group(1).split("\"")[0]);
+				
+			}
+			
+			Matcher imageMatcher = patternImage.matcher(webPageLine);
+			if(imageMatcher.find()) {
+				linkedImages.add(imageMatcher.group(1).split("\"")[0]);
 			}
 
 		});
-
-		webPage.setLinks(linkedUrls);
-
+		
+		
+		webPage.setLinks(linkedUrls.stream().filter(link->link.startsWith("/")).collect(Collectors.toSet()));
+		webPage.setExternalLinks((linkedUrls.stream().filter(link->link.startsWith("http")).collect(Collectors.toSet())));
+		webPage.setImages(linkedImages);
 	}
 }

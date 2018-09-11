@@ -3,7 +3,6 @@ package com.sidsawant.webcrawler.page;
 import java.util.List;
 import java.util.Set;
 
-import com.sidsawant.webcrawler.tree.TreeNode;
 
 public class WebPage {
 	String name;
